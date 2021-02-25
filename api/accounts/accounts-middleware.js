@@ -1,3 +1,5 @@
+const accounts_model = require("./accounts-model");
+
 exports.checkAccountPayload = (req, res, next) => {
   if (req.body.name && req.body.budget) {
     const name = req.body.name.trim();
@@ -24,7 +26,16 @@ exports.checkAccountPayload = (req, res, next) => {
 };
 
 exports.checkAccountNameUnique = async (req, res, next) => {
-  // DO YOUR MAGIC
+  const name = req.body.name.trim();
+  let accounts = await accounts_model.getAll();
+
+  accounts = accounts.filter((account) => account.name === name);
+
+  if (accounts.length > 0) {
+    res.status(400).json({ message: "that name is taken" });
+  } else {
+    next();
+  }
 };
 
 exports.checkAccountId = async (req, res, next) => {
