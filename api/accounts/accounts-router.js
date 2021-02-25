@@ -13,17 +13,19 @@ router.get("/", async (req, res, next) => {
       res.status(200).json(accounts);
     })
     .catch((err) => {
-      res
-        .status(500)
-        .json({
-          error: err,
-          message: "Error in retrieving accounts from database",
-        });
+      next(err);
     });
 });
 
-router.get("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
+router.get("/:id", checkAccountId, (req, res, next) => {
+  accounts_model
+    .getById(req.params.id)
+    .then((account) => {
+      res.status(200).json(account);
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 router.post("/", (req, res, next) => {
