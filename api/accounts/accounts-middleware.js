@@ -2,7 +2,7 @@ const accounts_model = require("./accounts-model");
 
 exports.checkAccountPayload = (req, res, next) => {
   if (req.body.name && req.body.budget) {
-    const name = req.body.name.trim();
+    let name = req.body.name;
     const budget = req.body.budget;
 
     if (typeof name !== "string") {
@@ -12,14 +12,19 @@ exports.checkAccountPayload = (req, res, next) => {
     if (typeof budget !== "number") {
       res.status(400).json({ message: "budget of account must be a number" });
     }
+    name = name.trim();
 
-    if (name.length < 3 || name.length > 100) {
+    if (budget < 0 || budget > 1000000) {
       res
         .status(400)
         .json({ message: "budget of account is too large or too small" });
+    } else if (name.length < 3 || name.length > 100) {
+      res
+        .status(400)
+        .json({ message: "name of account must be between 3 and 10" });
+    } else {
+      next();
     }
-
-    next();
   } else {
     res.status(400).json({ message: "name and budget are required" });
   }

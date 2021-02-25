@@ -28,16 +28,35 @@ router.get("/:id", checkAccountId, (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
-  // DO YOUR MAGIC
-});
+router.post(
+  "/",
+  checkAccountPayload,
+  checkAccountNameUnique,
+  (req, res, next) => {
+    accounts_model
+      .create(req.body)
+      .then((account) => {
+        res.status(201).json(account);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
+);
 
 router.put("/:id", (req, res, next) => {
   // DO YOUR MAGIC
 });
 
-router.delete("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
+router.delete("/:id", checkAccountId, (req, res, next) => {
+  accounts_model
+    .deleteById(req.params.id)
+    .then((deletedAcc) => {
+      res.status(200).json({ deletedAcc });
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 router.use((err, req, res, next) => {
