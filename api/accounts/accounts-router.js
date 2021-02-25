@@ -44,8 +44,22 @@ router.post(
   },
 );
 
-router.put("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
+router.put("/:id", checkAccountId, (req, res, next) => {
+  if (req.body.name || req.body.budget) {
+    accounts_model
+      .updateById(req.params.id, req.body)
+      .then((account) => {
+        res.status(200).json(account);
+      })
+      .catch((err) => next(err));
+  } else {
+    res
+      .status(400)
+      .json({
+        message:
+          "Please provide an updated name or budget for the given account",
+      });
+  }
 });
 
 router.delete("/:id", checkAccountId, (req, res, next) => {
